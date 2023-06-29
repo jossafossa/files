@@ -1,27 +1,33 @@
 {
   "name": "files.jossafossa",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.mix.js",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "watch": "npx mix watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jossafossa/files.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jossafossa/files/issues"
+  },
+  "homepage": "https://github.com/jossafossa/files#readme",
+  "devDependencies": {
+    "@vue/compiler-sfc": "^3.2.47",
+    "browser-sync": "^2.27.11",
+    "browser-sync-webpack-plugin": "^2.3.0",
+    "laravel-mix": "^6.0.49",
+    "vue-loader": "^16.2.0"
   },
   "dependencies": {
-    "core-js": "^3.8.3",
-    "vue": "^3.2.13",
-    "vue-router": "^4.0.3"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.12.16",
-    "@babel/eslint-parser": "^7.12.16",
-    "@vue/cli-plugin-babel": "~5.0.0",
-    "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-plugin-router": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
-    "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3",
-    "sass": "^1.32.7",
-    "sass-loader": "^12.0.0"
+    "peerjs": "^1.4.7",
+    "sass": "^1.58.0",
+    "sass-loader": "^13.2.0",
+    "vue": "^3.2.47"
   }
 }
