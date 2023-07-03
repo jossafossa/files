@@ -1,7 +1,7 @@
 <template>
   <Step>
-    <form id="step-1">
-      <h2>Target connection</h2>
+    <stack vertical>
+      <h2>Welcome {{ username }}</h2>
 
       <Row>
         <input
@@ -9,59 +9,42 @@
           id="receiver"
           name="receiver"
           placeholder="Receiver Name"
-          @change="connect($event.target.value)"
+          @keypress.enter="connector.connect($event.target.value)"
           :value="targetID"
         />
-        <small>The username of the client you want to send files to</small>
       </Row>
-    </form>
+
+      <button @click="connector.logout()">Logout</button>
+    </stack>
   </Step>
 </template>
 
 <script setup>
 import Step from "@/components/Step.vue";
 import Row from "@/components/Row.vue";
-import { ref, defineEmits, defineProps } from "vue";
-
+import { ref, defineProps, onMounted } from "vue";
+import stack from "@/components/stack.vue";
 import connector from "@/assets/js/PeerConnector.js";
+
+console.log("connector loaded");
+
+const username = ref("");
+username.value = connector.getName();
+connector.on("login", (e) => (username.value = connector.getName()));
 
 // get initial values from props
 const props = defineProps({
-  userID: {
-    type: String,
-    required: false,
-  },
   targetID: {
     type: String,
     required: false,
   },
 });
 
-// fire register and connect events if props are set
-if (props.userID) {
-  connector.register(props.userID);
-}
-
+// fire login and connect events if props are set
 if (props.targetID) {
+  console.log("connect");
   connector.connect(props.targetID);
 }
-
-// emits
-const emit = defineEmits(["connect"]);
-
-const connect = (value) => {
-  connector.connect(value);
-};
-
-connector.on("connected", (conn) => emit("connect", conn));
-
-const logs = ref([]);
 </script>
 
-<style lang="scss" scoped>
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-</style>
+<style lang="scss" scoped></style>
