@@ -1,0 +1,12 @@
+.vstack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.hstack {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  flex-wrap: wrap;
+}

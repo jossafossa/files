@@ -1,46 +1,57 @@
 <template>
-  <Step>
-    <stack vertical>
-      <stack horizontal>
-        <h2>Chat with {{ connector.targetID }}</h2>
+  <article class="chat">
+    <header>
+      <div class="container">
+        <h2>
+          <a :href="shareLink"> Chat {{ connector.targetID }} </a>
+        </h2>
         <button @click="connector.disconnect()">x</button>
-      </stack>
-
-      <div class="messages" v-for="message in messages">
-        <div class="message">
-          <h2>{{ message.message }}</h2>
-          <hr />
-          <span>From: {{ message.sender }}</span>
-          <progress
-            v-if="message?.total"
-            :value="message?.received"
-            :max="message?.total"
-          ></progress>
-        </div>
       </div>
-
-      <textarea
-        v-model="message"
-        placeholder="message"
-        @keyup.ctrl.enter="sendMessage(message)"
-        @keyup.meta.enter="sendMessage(message)"
-        rows="5"
-      />
-      <button @click="sendMessage(message)">Send</button>
-
-      <input type="file" @change="sendFiles" />
-    </stack>
-  </Step>
+    </header>
+    <section>
+      <div class="container">
+        <stack vertical>
+          <div class="messages" v-for="message in messages">
+            <div class="message">
+              <h2>{{ message.message }}</h2>
+              <hr />
+              <span>From: {{ message.sender }}</span>
+              <progress
+                v-if="message?.total"
+                :value="message?.received"
+                :max="message?.total"
+              ></progress>
+            </div>
+          </div>
+        </stack>
+      </div>
+    </section>
+    <footer>
+      <div class="container">
+        <ChatInput> </ChatInput>
+      </div>
+    </footer>
+  </article>
 </template>
 
 <script setup>
-import connector from "@/assets/js/PeerConnector.js";
+import connector from "@/assets/js/peerInstance.js";
 import { ref } from "vue";
 import Step from "@/components/Step.vue";
+import ChatInput from "@/components/ChatInput.vue";
 import stack from "@/components/stack.vue";
 
-const message = ref("");
 const messages = ref([]);
+let shareLink = ref("");
+
+// get base url without query params
+let url = window.location.origin + window.location.pathname;
+
+// add userID and targetID to url
+const params = new URLSearchParams(window.location.search);
+params.set("userID", connector.userID);
+params.set("targetID", connector.targetID);
+shareLink.value = `${url}?${params.toString()}`;
 
 const downloadFile = ({ data, name, size }) => {
   const blob = new Blob([data], { type: "text/plain" });
@@ -49,11 +60,6 @@ const downloadFile = ({ data, name, size }) => {
   a.href = url;
   a.download = name;
   a.click();
-};
-
-const sendFiles = (e) => {
-  const file = e.target.files[0];
-  connector.sendFile(file);
 };
 
 const formatBytes = (size) => {
@@ -93,15 +99,32 @@ connector.on("data:message", (e) => {
   });
 });
 
-const sendMessage = (message) => {
-  connector.sendMessage(message);
-  messages.value.push({
-    message: message,
-    sender: connector.userID,
-  });
-};
-
 // setup
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.chat {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: whitesmoke;
+
+  > header {
+    padding: 1rem 0;
+    background-color: var(--color-secondary);
+    color: white;
+  }
+
+  > section {
+    flex: 1;
+    padding: 1rem 0;
+  }
+
+  > footer {
+    padding: 1rem 0;
+    background-color: var(--color-secondary);
+    color: white;
+  }
+}
+</style>

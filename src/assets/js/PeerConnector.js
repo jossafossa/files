@@ -248,7 +248,7 @@ class PeerConnector {
   }
 }
 
-const connector = new PeerConnector({
-  prefix: "files_",
-});
-export default connector;
+// const connector = new PeerConnector({
+//   prefix: "files_",
+// });
+export default PeerConnector;

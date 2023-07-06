@@ -1,6 +1,5 @@
 input,
-button,
-input::file-selector-button {
+textarea {
   padding: 0.7rem 1rem;
   background-color: white;
   border-radius: 0.5rem;
@@ -9,4 +8,10 @@ input::file-selector-button {
   border: 0px solid white;
   width: auto;
   display: block;
+}
+
+input[type="file"] {
+  &::file-selector-button {
+    @extend %button;
+  }
 }

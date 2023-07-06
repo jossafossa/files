@@ -1,4 +1,7 @@
-@import "reset";
-@import "base";
-@import "fonts";
-@import "form";
+@import "reset.scss";
+@import "settings.scss";
+@import "base.scss";
+@import "framework/framework.scss";
+@import "fonts.scss";
+@import "buttons.scss";
+@import "form.scss";

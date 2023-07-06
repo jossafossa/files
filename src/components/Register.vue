@@ -14,7 +14,7 @@
         />
         <small>This name can be used on the receiver side to connect</small>
       </Row>
-      <button>Login</button>
+      <button class="button">Login</button>
 
       <Log :logs="logs"> </Log>
     </div>
@@ -27,7 +27,7 @@ import Row from "@/components/Row.vue";
 import Log from "@/components/Log.vue";
 import { ref, defineEmits, defineProps } from "vue";
 
-import connector from "@/assets/js/PeerConnector.js";
+import connector from "@/assets/js/peerInstance.js";
 
 // get initial values from props
 const props = defineProps({

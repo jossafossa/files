@@ -1,17 +1,17 @@
 <template>
-  <main>
+  <div class="main-container">
     <login v-if="state === 'login'" @login="login" :userID="userID"></login>
     <Connector v-if="state === 'connect'" :targetID="targetID"></Connector>
 
     <Chat v-if="state === 'connected'"> </Chat>
     <!-- <Log :logs="logs"> </Log> -->
-  </main>
+  </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import login from "@/components/login.vue";
-import connector from "@/assets/js/PeerConnector.js";
+import connector from "@/assets/js/peerInstance.js";
 import Connector from "@/components/Connector.vue";
 import Chat from "@/components/Chat.vue";
 
@@ -53,7 +53,7 @@ connector.on("disconnect", (e) => log("disconnected", "disconnect"));
 <style lang="scss">
 @import "@/assets/scss/global.scss";
 
-main {
+.main-container {
   width: 100vw;
   height: 100vh;
   display: flex;

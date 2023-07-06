@@ -1,6 +1,12 @@
 export default class FileHandler {
   constructor() {}
 
+  /**
+   *
+   * @param {File} file
+   * @param {int} chunkSize
+   * @returns Promise
+   */
   createChunks(file, chunkSize = 1638400) {
     const fileSize = file.size;
     const chunks = Math.ceil(fileSize / chunkSize);
