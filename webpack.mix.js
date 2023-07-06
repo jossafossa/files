@@ -10,13 +10,15 @@ mix
       },
     },
   })
-  .vue({ version: 3 })
+  .vue({
+    version: 3
+  })
   // browserSync files.jossafossa.test on port 3000 and open the proxy url in the browser. Auto reload on changes.
   .browserSync({
-    proxy: "files.test",
+    // proxy: "files.test",
     port: 3000,
-    host: "files.test",
-    open: "external",
+    // host: "files.test",
+    // open: "external",
     files: "build/app.js",
     injectChanges: true,
   })
