@@ -13,7 +13,7 @@
         />
       </Row>
 
-      <button @click="connector.login(userValue)">Login</button>
+      <button class="button" @click="connector.login(userValue)">Login</button>
     </stack>
   </Step>
 </template>
@@ -23,7 +23,7 @@ import Step from "@/components/Step.vue";
 import Row from "@/components/Row.vue";
 import stack from "@/components/stack.vue";
 import { defineProps, ref } from "vue";
-import connector from "@/assets/js/PeerConnector.js";
+import connector from "@/assets/js/peerInstance.js";
 
 console.log("login loaded");
 

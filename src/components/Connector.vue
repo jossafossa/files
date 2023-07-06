@@ -14,7 +14,7 @@
         />
       </Row>
 
-      <button @click="connector.logout()">Logout</button>
+      <button class="button" @click="connector.logout()">Logout</button>
     </stack>
   </Step>
 </template>
@@ -24,7 +24,7 @@ import Step from "@/components/Step.vue";
 import Row from "@/components/Row.vue";
 import { ref, defineProps, onMounted } from "vue";
 import stack from "@/components/stack.vue";
-import connector from "@/assets/js/PeerConnector.js";
+import connector from "@/assets/js/peerInstance.js";
 
 console.log("connector loaded");
 
