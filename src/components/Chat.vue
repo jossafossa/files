@@ -1,5 +1,8 @@
 <template>
   <article class="chat">
+    <picture class="is-blurry">
+      <img src="@/assets/img/background.jpeg" alt="">
+    </picture>
     <header>
       <div class="container">
         <h2>
@@ -16,11 +19,7 @@
               <h2>{{ message.message }}</h2>
               <hr />
               <span>From: {{ message.sender }}</span>
-              <progress
-                v-if="message?.total"
-                :value="message?.received"
-                :max="message?.total"
-              ></progress>
+              <progress v-if="message?.total" :value="message?.received" :max="message?.total"></progress>
             </div>
           </div>
         </stack>
@@ -37,7 +36,6 @@
 <script setup>
 import connector from "@/assets/js/peerInstance.js";
 import { ref } from "vue";
-import Step from "@/components/Step.vue";
 import ChatInput from "@/components/ChatInput.vue";
 import stack from "@/components/stack.vue";
 
@@ -53,9 +51,8 @@ params.set("userID", connector.userID);
 params.set("targetID", connector.targetID);
 shareLink.value = `${url}?${params.toString()}`;
 
-const downloadFile = ({ data, name, size }) => {
-  const blob = new Blob([data], { type: "text/plain" });
-  const url = window.URL.createObjectURL(blob);
+const downloadFile = ({ file, name, size }) => {
+  const url = window.URL.createObjectURL(file);
   const a = document.createElement("a");
   a.href = url;
   a.download = name;
@@ -109,22 +106,31 @@ connector.on("data:message", (e) => {
   flex-direction: column;
   width: 100%;
   background-color: whitesmoke;
+  position: relative;
+  isolation: isolate;
 
-  > header {
-    padding: 1rem 0;
-    background-color: var(--color-secondary);
-    color: white;
+  >picture {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
   }
 
-  > section {
+  >header {
+    padding: 1rem 0;
+    background-color: var(--color-white-50);
+  }
+
+  >section {
     flex: 1;
     padding: 1rem 0;
   }
 
-  > footer {
+  >footer {
     padding: 1rem 0;
     background-color: var(--color-secondary);
-    color: white;
   }
 }
 </style>

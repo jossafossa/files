@@ -1,0 +1,40 @@
+html {
+  font-size: var(--font-size-base);
+}
+
+body {
+  font-family: var(--font-family-base);
+  color: var(--font-color);
+}
+
+@include prefix(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--font-family-heading);
+}
+
+@include prefix(h1, h2) {
+  font-weight: var(--font-weight-normal);
+}
+
+@include prefix(h1) {
+  font-size: rfs-value(32px, 24px);
+}
+
+@include prefix(h2) {
+  font-size: rfs-value(24px, 18px);
+}
+
+@include prefix(h3) {
+  font-size: rfs-value(20px, 16px);
+}
+
+@include prefix(h4) {
+  font-size: rfs-value(18px, 16px);
+}
+
+@include prefix(h5) {
+  font-size: rfs-value(16px, 16px);
+}
+
+@include prefix(h6) {
+  font-size: rfs-value(14px, 14px);
+}

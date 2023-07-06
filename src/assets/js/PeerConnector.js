@@ -118,7 +118,7 @@ class PeerConnector {
     }
   }
 
-  handleChunks(e) {
+  async handleChunks(e) {
     if (e.order == 0) {
       this.fileChunks = [];
     }
@@ -128,11 +128,11 @@ class PeerConnector {
     this.trigger("data:chunk", e);
 
     if (this.fileChunks.length === e.total) {
-      const file = this.fileHandler.createFile(this.fileChunks);
+      const file = await this.fileHandler.createFile(this.fileChunks);
       this.trigger("data:file", {
         type: "file",
         id: e.id,
-        blob: file,
+        file,
         name: e.name,
         size: e.size,
       });

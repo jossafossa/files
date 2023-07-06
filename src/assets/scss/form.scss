@@ -1,8 +1,12 @@
 input,
 textarea {
-  padding: 0.7rem 1rem;
+  --height: var(--form-height);
+  height: var(--height);
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
   background-color: white;
-  border-radius: 0.5rem;
+  border-radius: calc(var(--height) / 2);
   font-size: 100%;
   font-family: inherit;
   border: 0px solid white;

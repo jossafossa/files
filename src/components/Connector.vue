@@ -1,29 +1,30 @@
 <template>
-  <Step>
-    <stack vertical>
-      <h2>Welcome {{ username }}</h2>
+  <cardModel>
+    <template #header>
+      <div class="hstack justify-between align-center">
+        <h2>Welcome {{ username }}</h2>
+        <button class="button is-small is-white is-close" @click="connector.logout()"></button>
+      </div>
+    </template>
 
-      <Row>
-        <input
-          type="text"
-          id="receiver"
-          name="receiver"
-          placeholder="Receiver Name"
-          @keypress.enter="connector.connect($event.target.value)"
-          :value="targetID"
-        />
-      </Row>
+    <Row>
+      <input autofocus type="text" id="receiver" name="receiver" placeholder="Receiver Name"
+        @keypress.enter="connector.connect($event.target.value)" :value="targetID" />
+    </Row>
 
-      <button class="button" @click="connector.logout()">Logout</button>
-    </stack>
-  </Step>
+    <template #footer>
+
+      <button class="button is-full" @click="connector.connect($event.target.value)">Connect</button>
+
+
+    </template>
+  </cardModel>
 </template>
 
 <script setup>
-import Step from "@/components/Step.vue";
+import cardModel from "@/components/cards/cardModal.vue";
 import Row from "@/components/Row.vue";
 import { ref, defineProps, onMounted } from "vue";
-import stack from "@/components/stack.vue";
 import connector from "@/assets/js/peerInstance.js";
 
 console.log("connector loaded");

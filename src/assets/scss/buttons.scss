@@ -1,8 +1,61 @@
 .button,
 %button {
-  padding: 0.7rem 1rem;
-  background-color: var(--color-primary);
+  --height: var(--form-height);
+  --padding: 1.5rem;
+  height: var(--height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 100px;
+  padding: 0 var(--padding);
+  background-color: hsl-var(primary);
   color: var(--color-black);
   border: none;
-  border-radius: var(--global-radius);
+  cursor: pointer;
+  transition: var(--transition-base);
+  text-transform: uppercase;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-small);
+  letter-spacing: 1px;
+
+  @include active {
+    background-color: hsl-var(primary, -5deg, 0, -5%);
+  }
+
+  &.is-white {
+    background-color: hsl-var(white);
+    color: var(--font-color-body);
+
+    @include active {
+      background-color: hsl-var(white, -5deg, 0, -5%);
+    }
+  }
+
+  &.is-small {
+    --height: 2.5rem;
+  }
+
+  &.is-full {
+    width: 100%;
+  }
+
+  &.is-close {
+    width: var(--height);
+    padding: 0;
+    position: relative;
+
+    &:before,
+    &:after {
+      content: "";
+      position: absolute;
+      background-color: currentColor;
+      width: 1em;
+      height: 1px;
+      transform: rotate(45deg);
+    }
+
+    &:after {
+      transform: rotate(-45deg);
+    }
+  }
 }

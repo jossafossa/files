@@ -1,7 +1,28 @@
+$rfs-base: 16px;
+
 :root {
-  --color-primary: rgb(255, 205, 41);
-  --color-secondary: rgb(64, 86, 132);
-  --color-white: white;
-  --color-black: black;
-  --global-radius: 0.5rem;
+  @include color(primary, rgb(255, 205, 41));
+  @include color(secondary, rgb(64, 86, 132));
+  @include color(white, white);
+  --color-white-50: rgba(255, 255, 255, 0.3);
+
+  @include color(black, rgb(28, 28, 28));
+  --color-black-50: rgba(0, 0, 0, 0.5);
+  --border-radius: 0.5rem;
+
+  // weights
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-bold: 700;
+
+  // base
+  --font-family-base: "Nunito", sans-serif;
+  --font-size-base: 16px;
+  --font-size-small: 14px;
+  --font-color-base: var(--color-black);
+  --transition-base: 0.2s ease;
+  --font-family-heading: "Nunito", sans-serif;
+
+  // forms
+  --form-height: 3rem;
 }

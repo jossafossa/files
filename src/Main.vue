@@ -1,7 +1,7 @@
 <template>
-  <div class="main-container">
-    <login v-if="state === 'login'" @login="login" :userID="userID"></login>
-    <Connector v-if="state === 'connect'" :targetID="targetID"></Connector>
+  <div class="main">
+    <Setup v-if="state !== 'connected'">
+    </Setup>
 
     <Chat v-if="state === 'connected'"> </Chat>
     <!-- <Log :logs="logs"> </Log> -->
@@ -10,18 +10,13 @@
 
 <script setup>
 import { ref } from "vue";
-import login from "@/components/login.vue";
 import connector from "@/assets/js/peerInstance.js";
-import Connector from "@/components/Connector.vue";
+import Setup from "@/components/Setup.vue";
 import Chat from "@/components/Chat.vue";
 
 const state = ref("login");
 const logs = ref([]);
 
-// get initial values from query params
-const params = new URLSearchParams(window.location.search);
-const userID = ref(params.get("userID"));
-const targetID = ref(params.get("targetID"));
 
 const log = (message, type = false) => {
   type = type ? `[${type}] ` : "";
@@ -53,7 +48,7 @@ connector.on("disconnect", (e) => log("disconnected", "disconnect"));
 <style lang="scss">
 @import "@/assets/scss/global.scss";
 
-.main-container {
+.main {
   width: 100vw;
   height: 100vh;
   display: flex;

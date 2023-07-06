@@ -1,27 +1,24 @@
 <template>
-  <Step>
-    <stack vertical>
-      <h2>Enter you username</h2>
+  <cardModel>
 
-      <Row @keypress.enter="connector.login(userValue)">
-        <input
-          v-model="userValue"
-          type="text"
-          name="sender"
-          id="sender"
-          placeholder="username"
-        />
-      </Row>
+    <template #header>
+      <h2>Enter your username</h2>
+    </template>
 
-      <button class="button" @click="connector.login(userValue)">Login</button>
-    </stack>
-  </Step>
+    <Row @keypress.enter="connector.login(userValue)">
+      <input autofocus v-model="userValue" type="text" name="sender" id="sender" placeholder="username" />
+    </Row>
+
+    <template #footer>
+      <button class="button is-full" @click="connector.login(userValue)">Login</button>
+    </template>
+
+  </cardModel>
 </template>
 
 <script setup>
-import Step from "@/components/Step.vue";
+import cardModel from "@/components/cards/cardModal.vue";
 import Row from "@/components/Row.vue";
-import stack from "@/components/stack.vue";
 import { defineProps, ref } from "vue";
 import connector from "@/assets/js/peerInstance.js";
 
