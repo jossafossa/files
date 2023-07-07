@@ -1,10 +1,11 @@
 <template>
   <div class="main">
-    <Setup v-if="state !== 'connected'">
-    </Setup>
+    <Setup v-if="state !== 'connected'"> </Setup>
 
     <Chat v-if="state === 'connected'"> </Chat>
     <!-- <Log :logs="logs"> </Log> -->
+
+    <Log :logs="logs"></Log>
   </div>
 </template>
 
@@ -13,10 +14,10 @@ import { ref } from "vue";
 import connector from "@/assets/js/peerInstance.js";
 import Setup from "@/components/Setup.vue";
 import Chat from "@/components/Chat.vue";
+import Log from "@/components/Log.vue";
 
 const state = ref("login");
 const logs = ref([]);
-
 
 const log = (message, type = false) => {
   type = type ? `[${type}] ` : "";

@@ -1,24 +1,30 @@
 <template>
-  <cardModel>
+  <form @submit.prevent="submit">
+    <cardModel>
+      <template #header>
+        <h2>Enter your username</h2>
+      </template>
 
-    <template #header>
-      <h2>Enter your username</h2>
-    </template>
+      <floatingInput
+        v-model="userValue"
+        autofocus="true"
+        type="text"
+        name="sender"
+        id="sender"
+        required="true"
+        label="Username"
+      ></floatingInput>
 
-    <Row @keypress.enter="connector.login(userValue)">
-      <input autofocus v-model="userValue" type="text" name="sender" id="sender" placeholder="username" />
-    </Row>
-
-    <template #footer>
-      <button class="button is-full" @click="connector.login(userValue)">Login</button>
-    </template>
-
-  </cardModel>
+      <template #footer>
+        <button class="button is-full">Login</button>
+      </template>
+    </cardModel>
+  </form>
 </template>
 
 <script setup>
 import cardModel from "@/components/cards/cardModal.vue";
-import Row from "@/components/Row.vue";
+import floatingInput from "@/components/form/floatingInput.vue";
 import { defineProps, ref } from "vue";
 import connector from "@/assets/js/peerInstance.js";
 
@@ -33,6 +39,11 @@ const props = defineProps({
 });
 
 const userValue = ref(props.userID);
+
+const submit = () => {
+  console.log("submit");
+  connector.login(userValue.value);
+};
 
 // fire login and connect events if props are set
 if (props.userID) {

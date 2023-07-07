@@ -1,3 +1,5 @@
+@use "sass:math";
+
 // takes a list of selectors and adds % and a class for each
 /* 
 @include prefix(h1, h2) {
@@ -56,7 +58,8 @@ $rfs-max: 800px;
 
 // mixins
 @function interpolate($from, $to, $fromWidth, $toWidth) {
-  $slope: ($to - $from) / ($toWidth - $fromWidth);
+  // $slope: ($to - $from) / ($toWidth - $fromWidth);
+  $slope: math.div($to - $from, $toWidth - $fromWidth);
   $base: $from - $slope * $fromWidth;
 
   @return calc(#{$base} + #{100vw * $slope});
