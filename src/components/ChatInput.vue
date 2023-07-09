@@ -1,19 +1,38 @@
 <template>
-  <div class="chat-input">
-    <textarea
-      v-model="message"
-      placeholder="message"
-      @keyup.ctrl.enter="sendMessage(message)"
-      @keyup.meta.enter="sendMessage(message)"
-      rows="3"
-    />
-    <input type="file" @change="sendFiles" />
-    <button class="button" @click="sendMessage(message)">Send</button>
-  </div>
+  <form @submit.prevent="submit()" @keydown.ctrl.enter="submit()" @keydown.meta.enter="submit()">
+    <div class="chat-input">
+
+      <div class="show-for-md">
+        <label class="button is-icon " for="file">
+          <i class="fa-regular fa-file"></i>
+        </label>
+        <input type="file" hidden id="file" @change="sendFiles" />
+      </div>
+
+      <FloatingInput autofocus type="textarea" v-model="message" label="message" rows="3" />
+
+
+      <div class="vstack">
+
+        <button class="button is-icon">
+          <i class="fa-regular fa-paper-plane"></i>
+        </button>
+
+
+        <div class=" hide-for-md">
+          <label class="button is-icon" for="file">
+            <i class="fa-regular fa-file"></i>
+          </label>
+        </div>
+
+      </div>
+    </div>
+  </form>
 </template>
 
 <script setup>
 import connector from "@/assets/js/peerInstance.js";
+import FloatingInput from "./form/floatingInput.vue";
 import { ref } from "vue";
 
 const message = ref("");
@@ -23,12 +42,9 @@ const sendFiles = (e) => {
   connector.sendFile(file);
 };
 
-const sendMessage = (message) => {
-  connector.sendMessage(message);
-  messages.value.push({
-    message: message,
-    sender: connector.userID,
-  });
+const submit = () => {
+  connector.sendMessage(message.value);
+  message.value = "";
 };
 </script>
 
@@ -37,7 +53,7 @@ const sendMessage = (message) => {
   display: flex;
   gap: 1rem;
 
-  > textarea {
+  >.floating-input {
     flex: 1;
   }
 }

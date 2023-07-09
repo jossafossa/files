@@ -16,3 +16,29 @@
 .align-center {
   align-items: center;
 }
+
+// create breakpoint visibility classes
+// show-for-{breakpoint}
+// hide-for-{breakpoint}
+
+[class*="show-for-"] {
+  display: none !important;
+}
+@each $breakpoint, $value in $breakpoints {
+  .show-for-#{$breakpoint} {
+    @include breakpoint($breakpoint) {
+      display: block !important;
+    }
+  }
+}
+
+[class*="hide-for-"] {
+  display: block !important;
+}
+@each $breakpoint, $value in $breakpoints {
+  .hide-for-#{$breakpoint} {
+    @include breakpoint($breakpoint) {
+      display: none !important;
+    }
+  }
+}

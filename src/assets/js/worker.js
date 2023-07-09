@@ -42,15 +42,13 @@ export default class FileHandler {
    * @returns {File} A file object
    */
   createFile(chunks) {
-    console.log({ chunks });
-
     // sort chunks by order
     chunks.sort((a, b) => {
       return a.order - b.order;
     });
 
-    const base64 = chunks.reduce((acc, chunk) => {
-      return acc + chunk.data;
+    const base64 = chunks.reduce((acc, data) => {
+      return acc + data.chunk.data;
     }, "");
     return this.base64ToFile(base64, "file");
   }
@@ -75,12 +73,17 @@ export default class FileHandler {
   }
 
   addChunk(chunk) {
-    console.log("chonko", chunk);
+    const id = chunk.id;
     if (!this.files[id]) {
       this.files[id] = [];
     }
 
     this.files[id].push(chunk);
+
+    if (this.files[id].length === chunk.total) {
+      const file = this.createFile(this.files[id]);
+      post("file", file);
+    }
   }
 }
 
@@ -93,11 +96,11 @@ function post(type, data) {
 
 const fileHandler = new FileHandler();
 onmessage = async (event) => {
-  let data = event.data;
-  let type = data.type;
+  let result = event.data;
+  let type = result.type;
+  let data = result.data;
 
   if (type === "addChunk") {
-    console.log("before", data);
     fileHandler.addChunk(data);
   }
 

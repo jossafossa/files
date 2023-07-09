@@ -33,7 +33,7 @@ output:
   --color-#{$name}-l: #{lightness($value)};
 }
 
-@function hsl-var($name, $h: 0, $s: 0, $l: 0) {
+@function hsl-var($name, $h: 0, $s: 0, $l: 0, $a: 1) {
   $color: --color-#{$name};
 
   // if hue is not 0 then we need to calculate the hue
@@ -41,7 +41,7 @@ output:
   $s-var: if($s == 0, var(#{$color}-s), calc(var(#{$color}-s) + #{$s}));
   $l-var: if($l == 0, var(#{$color}-l), calc(var(#{$color}-l) + #{$l}));
 
-  @return hsl(#{$h-var}, #{$s-var}, #{$l-var});
+  @return hsla(#{$h-var}, #{$s-var}, #{$l-var}, #{$a});
 }
 
 @mixin active {
@@ -72,4 +72,15 @@ $rfs-max: 800px;
   $rfs: interpolate($min-size, $desired-size, $rfs-min, $rfs-max);
 
   @return clamp(#{$min-size}, #{$rfs}, #{$desired-size});
+}
+
+@mixin breakpoint($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    $breakpoint-value: map-get($breakpoints, $breakpoint);
+    @media (min-width: $breakpoint-value) {
+      @content;
+    }
+  } @else {
+    @error "Breakpoint `#{$breakpoint}` does not exist in $breakpoints";
+  }
 }

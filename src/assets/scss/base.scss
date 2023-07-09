@@ -1,7 +1,11 @@
 .container {
   max-width: 1200px;
-  padding: 0 2rem;
+  padding: 0 1rem;
   margin: auto;
+
+  @include breakpoint(md) {
+    padding: 0 2rem;
+  }
 }
 
 picture {
@@ -22,4 +26,8 @@ picture {
       margin: calc(var(--blur-amount) * -1);
     }
   }
+}
+
+[hidden] {
+  display: none;
 }

@@ -38,3 +38,7 @@ body {
 @include prefix(h6) {
   font-size: rfs-value(14px, 14px);
 }
+
+.small {
+  font-size: var(--font-size-small);
+}

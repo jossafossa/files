@@ -31,12 +31,12 @@ const targetID = ref(params.get("targetID"));
 <style lang="scss" scoped>
 .setup {
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   display: flex;
   justify-content: center;
   align-items: center;
 
-  > picture {
+  >picture {
     position: absolute;
     width: 100%;
     height: 100%;

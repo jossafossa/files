@@ -26,4 +26,5 @@ mix
     // host: "www.files.test",
   })
   // disable cache
-  .version();
+  .version()
+  .sourceMaps();

@@ -16,19 +16,22 @@ class PeerConnector {
     this.trigger = this.events.trigger.bind(this.events);
 
     this.fileHandler = new FileHandler();
+    this.pendingFiles = [];
 
     // setup state
     this.state = "login";
-    this.on("login", () => (this.state = "connect"));
-    this.on("logout", () => (this.state = "login"));
-    this.on("disconnected", () => (this.state = "connect"));
-    this.on("connected", () => (this.state = "connected"));
-    this.on(["login", "logout", "disconnect", "connect"], () => {
-      this.trigger("state", this.state);
-    });
+    this.on("login", () => this.setState("connect"));
+    this.on("logout", () => this.setState("login"));
+    this.on("disconnected", () => this.setState("connect"));
+    this.on("connected", () => this.setState("connected"));
 
     // close connection on window close
     window.addEventListener("beforeunload", (e) => this.destroy());
+  }
+
+  setState(state) {
+    this.state = state;
+    this.trigger("state", state);
   }
 
   generateUID() {
@@ -45,6 +48,7 @@ class PeerConnector {
   }
 
   destroy() {
+    console.log("destroy");
     if (this.connection) {
       this.connection.close();
     }
@@ -92,7 +96,6 @@ class PeerConnector {
   }
 
   onOpen(id) {
-    console.log("connected", id);
     if (this.peer === null)
       this.trigger("error", "cannot open connection when not logged in");
 
@@ -115,7 +118,7 @@ class PeerConnector {
 
     // handle file data
     if (e.type === "file") {
-      this.trigger("data:file", e);
+      this.trigger("data:fileDone", e);
     }
 
     // handle message data
@@ -129,28 +132,48 @@ class PeerConnector {
     }
   }
 
-  async handleChunks(e) {
-    if (e.order == 0) {
-      this.fileChunks = [];
+  handleFile(data) {
+    this.trigger("data:fileStart", {
+      type: "file",
+      id: data.id,
+      name: data.name,
+      size: data.size,
+      total: data.total,
+      timestamp: Date.now(),
+    });
+    console.log("handling new file");
+    this.pendingFiles.push(data.id);
+
+    this.fileHandler.onFileComplete((file) => {
+      // remove from pending
+      this.pendingFiles = this.pendingFiles.filter((id) => id !== data.id);
+
+      // console.log(file);
+
+      // trigger file event
+      this.trigger("data:fileDone", {
+        type: "file",
+        id: data.id,
+        file,
+        name: data.name,
+        size: data.size,
+      });
+    });
+  }
+
+  async handleChunks(data) {
+    // if we don't have the file yet in this.pendingFiles, create it
+    if (!this.pendingFiles.includes(data.id)) {
+      this.handleFile(data);
     }
 
-    // console.log(e);
+    // add chunk to file
+    this.fileHandler.addChunk(data);
 
-    this.fileHandler.addChunk(e);
-    // this.fileChunks.push(e.chunk);
-
-    // this.trigger("data:chunk", e);
-
-    // if (this.fileChunks.length === e.total) {
-    //   const file = await this.fileHandler.createFile(this.fileChunks);
-    //   this.trigger("data:file", {
-    //     type: "file",
-    //     id: e.id,
-    //     file,
-    //     name: e.name,
-    //     size: e.size,
-    //   });
-    // }
+    // trigger progress event
+    this.trigger("data:fileProgress", {
+      ...data,
+    });
   }
 
   onHandshake(e) {
@@ -171,7 +194,6 @@ class PeerConnector {
       const chunks = await this.fileHandler.createChunks(file);
       const total = chunks.length;
       const uiID = this.generateUID();
-      console.log(chunks);
 
       for (let [order, chunk] of Object.entries(chunks)) {
         this.connection.send({
@@ -185,23 +207,28 @@ class PeerConnector {
         });
       }
 
-      // const blob = new Blob([file], { type: file.type });
+      const blob = new Blob([file], { type: file.type });
 
-      // this.connection.send({
-      //   type: "file",
-      //   blob,
-      //   name: file.name,
-      //   size: file.size,
-      // });
+      this.connection.send({
+        type: "file",
+        blob,
+        name: file.name,
+        size: file.size,
+        total,
+      });
     }
   }
 
   sendMessage(message) {
     if (this.connection) {
-      this.connection.send({
+      let data = {
         type: "message",
-        message: message,
-      });
+        message,
+        timestamp: Date.now(),
+      };
+      this.trigger("data:messageSent", data);
+
+      this.connection.send(data);
     }
   }
 
@@ -240,6 +267,9 @@ class PeerConnector {
   }
 
   connect(name) {
+    // to lowercase
+    name = name.toLowerCase();
+
     // close connection if we have one
     if (this.connection) {
       this.trigger("error", "already connected");

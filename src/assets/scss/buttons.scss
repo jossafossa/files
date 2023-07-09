@@ -39,6 +39,12 @@
     width: 100%;
   }
 
+  &.is-icon {
+    width: var(--height);
+    padding: 0;
+    font-size: 120%;
+  }
+
   &.is-close {
     width: var(--height);
     padding: 0;

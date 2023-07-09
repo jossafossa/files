@@ -1,4 +1,11 @@
 $rfs-base: 16px;
+$breakpoints: (
+  "sm": 320px,
+  "md": 768px,
+  "lg": 1024px,
+  "xl": 1216px,
+  "xxl": 1408px,
+);
 
 :root {
   @include color("primary", rgb(255, 205, 41));
@@ -24,8 +31,31 @@ $rfs-base: 16px;
   --font-family-heading: "Nunito", sans-serif;
 
   // forms
-  --form-height: 3rem;
+  --form-height: 2.5rem;
+  @include breakpoint(md) {
+    --form-height: 3rem;
+  }
 
   // content
   --blur-content: blur(3rem);
+  --background-chat-bubble: var(--color-white);
+  --background-chat-bubble-self: rgb(221, 243, 214);
+
+  // floating forms
+  // --fl-height:
+  // --fl-padding-x:
+  // --fl-padding-y:
+  // --fl-label-size:
+  // --fl-label-height:
+  // --fl-label-color:
+  // --fl-radius:
+  --fl-background: rgba(255, 255, 255, 0.2);
+  // --fl-color:
+  --fl-border-color: transparent;
+  --fl-outline-color: #{hsl-var(primary, -5deg, 0, -10%, 0.2)};
+  --fl-outline-width: 0.4rem;
+
+  // active
+  --fl-active-border-color: #{hsl-var(primary, -5deg, 0, 0%, 1)};
+  // --fl-active-label-color: var(--color-primary);
 }

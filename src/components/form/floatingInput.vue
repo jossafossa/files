@@ -1,13 +1,11 @@
 <template>
-  <div class="floating-input">
-    <input
-      v-bind="{ ...$attrs, ...$props }"
-      :value="modelValue"
-      :id="id"
-      :placeholder="label"
-      @input="updateModelValue($event.target.value)"
-      ref="input"
-    />
+  <div class="floating-input" :class="{ 'is-textarea': textarea }">
+    <input v-if="!textarea" v-bind="{ ...$attrs, ...$props }" :value="modelValue" :id="id" :placeholder="label"
+      @input="updateModelValue($event.target.value)" ref="input" />
+    <textarea v-if="textarea" v-bind="{ ...$attrs, ...$props }" :value="modelValue" :id="id" :placeholder="label"
+      @input="updateModelValue($event.target.value)" ref="input">
+
+    </textarea>
     <label :for="id">{{ label }}</label>
   </div>
 </template>
@@ -17,11 +15,13 @@ import { ref, defineProps, defineEmits, onMounted } from "vue";
 
 const props = defineProps({
   label: String,
+  type: String,
   modelValue: String,
 });
 
 const emit = defineEmits(["update:modelValue"]);
 
+const textarea = props.type === 'textarea';
 const input = ref(null);
 const id = ref(Math.random().toString(36).substring(2));
 
@@ -73,14 +73,14 @@ onMounted(() => {
     --_border-color: var(--_active-border-color);
   }
 
-  > input,
-  > label {
+  > :where(input, textarea),
+  >label {
     transition: var(--transition-base);
     padding: var(--_padding-y) var(--_padding-x);
     height: 100%;
   }
 
-  > input {
+  > :where(input, textarea) {
     border: none;
     background-color: transparent;
     font: inherit;
@@ -94,7 +94,11 @@ onMounted(() => {
     }
   }
 
-  > label {
+  &.is-textarea {
+    --_radius: calc(var(--_height) / 2);
+  }
+
+  >label {
     position: absolute;
     left: 0;
     top: 0;
@@ -105,15 +109,15 @@ onMounted(() => {
     color: var(--_label-color);
   }
 
-  > input:focus + label,
-  > input:not(:placeholder-shown) + label {
+  >:where(input, textarea):focus+label,
+  >:where(input, textarea):not(:placeholder-shown)+label {
     font-size: var(--_label-size);
     height: calc(var(--_label-height) + var(--_padding-y) * 2);
 
     color: var(--_active-label-color);
   }
 
-  > input:focus {
+  >:where(input, textarea):focus {
     outline-width: var(--_outline-width);
   }
 }

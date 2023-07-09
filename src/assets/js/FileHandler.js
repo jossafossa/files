@@ -1,22 +1,31 @@
 export default class FileHandler {
   constructor() {
     this.worker = new Worker("build/worker.js");
+
+    this.callbacks = [];
+    this.worker.onmessage = (event) => {
+      this.callbacks.forEach((callback) => callback(event));
+    };
   }
 
-  sendData(type, args) {
+  sendData(type, data) {
     let params = {
       type,
-      ...args,
+      data,
     };
     this.worker.postMessage(params);
 
     return new Promise((resolve) => {
-      this.worker.onmessage = (event) => {
+      this.onMessage((event) => {
         let data = event.data;
         if (data.type !== type) return;
         resolve(data.data);
-      };
+      });
     });
+  }
+
+  onMessage(callback) {
+    this.callbacks.push(callback);
   }
 
   /**
@@ -34,7 +43,14 @@ export default class FileHandler {
   }
 
   addChunk(chunk) {
-    console.log(chunk);
     return this.sendData("addChunk", chunk);
+  }
+
+  onFileComplete(callback) {
+    this.onMessage((event) => {
+      let data = event.data;
+      if (data.type !== "file") return;
+      callback(data.data);
+    });
   }
 }

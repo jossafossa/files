@@ -4,7 +4,7 @@
 
     <Chat v-if="state === 'connected'"> </Chat>
 
-    <Log :logs="errors"> </Log>
+    <!-- <Log :logs="errors"> </Log> -->
   </div>
 </template>
 
@@ -17,6 +17,7 @@ import Log from "@/components/Log.vue";
 
 const state = ref("login");
 connector.on("state", (e) => {
+  console.log('state changed to ', e);
   state.value = e;
 });
 const logs = ref([]);
@@ -46,12 +47,6 @@ const removeQueryParam = (param) => {
   window.history.replaceState({}, "", url);
 };
 
-// manage state
-connector.on("login", (e) => (state.value = "connect"));
-connector.on("logout", (e) => (state.value = "login"));
-connector.on("connected", (e) => (state.value = "connected"));
-connector.on("disconnect", (e) => (state.value = "connect"));
-
 // remove userID from url on connect
 connector.on("login", (e) => removeQueryParam("userID"));
 connector.on("connected", (e) => removeQueryParam("targetID"));
@@ -65,7 +60,7 @@ connector.on("connect", (name) => log(`connecting to ${name}...`, "connect"));
 connector.on("connected", (e) => log("connected", "connected"));
 connector.on("disconnect", (e) => errorLog("disconnect", "disconnected"));
 connector.on("data:handshake", (e) => log("handshake", e));
-connector.on("data", (e) => log("data", e));
+// connector.on("data", (e) => log("data", e));
 </script>
 
 <style lang="scss">
@@ -73,7 +68,7 @@ connector.on("data", (e) => log("data", e));
 
 .main {
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;

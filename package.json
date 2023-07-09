@@ -5,6 +5,7 @@
   "main": "webpack.mix.js",
   "scripts": {
     "watch": "npx mix watch",
+    "build": "npx mix build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
