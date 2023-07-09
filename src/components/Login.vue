@@ -28,8 +28,6 @@ import floatingInput from "@/components/form/floatingInput.vue";
 import { defineProps, ref } from "vue";
 import connector from "@/assets/js/peerInstance.js";
 
-console.log("login loaded");
-
 // get initial values from props
 const props = defineProps({
   userID: {
@@ -41,13 +39,11 @@ const props = defineProps({
 const userValue = ref(props.userID);
 
 const submit = () => {
-  console.log("submit");
   connector.login(userValue.value);
 };
 
 // fire login and connect events if props are set
 if (props.userID) {
-  console.log("login");
   connector.login(props.userID);
 }
 </script>

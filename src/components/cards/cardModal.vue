@@ -14,8 +14,7 @@
   </article>
 </template>
 
-<script setup>
-</script>
+<script setup></script>
 
 <style lang="scss" scoped>
 .card-modal {
@@ -26,19 +25,19 @@
   --padding: var(--padding-y) var(--padding-x);
   border-radius: 0.5rem;
   background-color: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(3rem);
+  backdrop-filter: var(--blur-content);
 
-  >header {
+  > header {
     padding: 1rem var(--padding-x);
   }
 
-  >section {
+  > section {
     padding: var(--padding);
     border: 1px solid var(--color-white-50);
     border-width: 1px 0;
   }
 
-  >footer {
+  > footer {
     padding: 1rem var(--padding-x);
   }
 }

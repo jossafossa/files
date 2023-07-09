@@ -1,14 +1,19 @@
 <template>
   <article class="chat">
     <picture class="is-blurry">
-      <img src="@/assets/img/background.jpeg" alt="">
+      <img src="@/assets/img/background.jpeg" alt="" />
     </picture>
     <header>
       <div class="container">
-        <h2>
-          <a :href="shareLink"> Chat {{ connector.targetID }} </a>
-        </h2>
-        <button @click="connector.disconnect()">x</button>
+        <div class="header-container">
+          <h2>
+            <a :href="shareLink"> Chat {{ connector.targetID }} </a>
+          </h2>
+          <button
+            class="button is-close is-white is-small"
+            @click="connector.disconnect()"
+          ></button>
+        </div>
       </div>
     </header>
     <section>
@@ -19,7 +24,11 @@
               <h2>{{ message.message }}</h2>
               <hr />
               <span>From: {{ message.sender }}</span>
-              <progress v-if="message?.total" :value="message?.received" :max="message?.total"></progress>
+              <progress
+                v-if="message?.total"
+                :value="message?.received"
+                :max="message?.total"
+              ></progress>
             </div>
           </div>
         </stack>
@@ -70,7 +79,6 @@ const formatBytes = (size) => {
 };
 
 connector.on("data:chunk", (e) => {
-  console.log(e);
   if (e.order === 0) {
     messages.value.push({
       message: `Receiving file ${e.name} (${formatBytes(e.size)})`,
@@ -109,7 +117,7 @@ connector.on("data:message", (e) => {
   position: relative;
   isolation: isolate;
 
-  >picture {
+  > picture {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -118,17 +126,23 @@ connector.on("data:message", (e) => {
     z-index: -1;
   }
 
-  >header {
+  > header {
     padding: 1rem 0;
     background-color: var(--color-white-50);
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
   }
 
-  >section {
+  > section {
     flex: 1;
     padding: 1rem 0;
   }
 
-  >footer {
+  > footer {
     padding: 1rem 0;
     background-color: var(--color-secondary);
   }

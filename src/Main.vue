@@ -3,9 +3,8 @@
     <Setup v-if="state !== 'connected'"> </Setup>
 
     <Chat v-if="state === 'connected'"> </Chat>
-    <!-- <Log :logs="logs"> </Log> -->
 
-    <Log :logs="logs"></Log>
+    <Log :logs="errors"> </Log>
   </div>
 </template>
 
@@ -17,33 +16,56 @@ import Chat from "@/components/Chat.vue";
 import Log from "@/components/Log.vue";
 
 const state = ref("login");
+connector.on("state", (e) => {
+  state.value = e;
+});
 const logs = ref([]);
+const errors = ref([]);
 
-const log = (message, type = false) => {
-  type = type ? `[${type}] ` : "";
-  let log = `${type} ${message}`;
-  logs.value.push(log);
-  console.log(log);
+const formatLog = (message, type = false) => {
+  type = type ? `[${type}]` : "";
+  return [type, message];
 };
 
-// save session data on connect
-// connector.on("connected", (e) => {
-//   userID.value = connector.id;
-//   targetID.value = connector.targetID;
-// });
+const errorLog = (message, type = false) => {
+  console.log(...formatLog(type, message));
+  errors.value.push(formatLog(type, message).join(" "));
+};
 
+const log = (message, type = false) => {
+  console.log(...formatLog(type, message));
+};
+
+const removeQueryParam = (param) => {
+  const url = new URL(window.location.href);
+
+  // if url contains force bail
+  if (url.searchParams.has("force")) return;
+
+  url.searchParams.delete(param);
+  window.history.replaceState({}, "", url);
+};
+
+// manage state
 connector.on("login", (e) => (state.value = "connect"));
 connector.on("logout", (e) => (state.value = "login"));
-connector.on("data:handshake", (e) => (state.value = "connected"));
+connector.on("connected", (e) => (state.value = "connected"));
 connector.on("disconnect", (e) => (state.value = "connect"));
 
+// remove userID from url on connect
+connector.on("login", (e) => removeQueryParam("userID"));
+connector.on("connected", (e) => removeQueryParam("targetID"));
+
 connector.on("login", (e) => log(`login as ${e.id}`, "login"));
+connector.on("logout", (e) => log(`logout`, "logout"));
 connector.on("retry", (e) => log(`retrying connection`, "retry"));
-connector.on("loginError", (e) => log(e, "loginError"));
-connector.on("error", (e) => log(e, "error"));
+connector.on("loginError", (e) => errorLog(e, "loginError"));
+connector.on("error", (e) => errorLog(e, "error"));
 connector.on("connect", (name) => log(`connecting to ${name}...`, "connect"));
 connector.on("connected", (e) => log("connected", "connected"));
-connector.on("disconnect", (e) => log("disconnected", "disconnect"));
+connector.on("disconnect", (e) => errorLog("disconnect", "disconnected"));
+connector.on("data:handshake", (e) => log("handshake", e));
+connector.on("data", (e) => log("data", e));
 </script>
 
 <style lang="scss">

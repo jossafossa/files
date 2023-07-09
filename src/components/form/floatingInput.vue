@@ -6,13 +6,14 @@
       :id="id"
       :placeholder="label"
       @input="updateModelValue($event.target.value)"
+      ref="input"
     />
     <label :for="id">{{ label }}</label>
   </div>
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from "vue";
+import { ref, defineProps, defineEmits, onMounted } from "vue";
 
 const props = defineProps({
   label: String,
@@ -21,6 +22,7 @@ const props = defineProps({
 
 const emit = defineEmits(["update:modelValue"]);
 
+const input = ref(null);
 const id = ref(Math.random().toString(36).substring(2));
 
 // Create a computed property to synchronize prop value
@@ -31,6 +33,12 @@ const updateModelValue = (value) => {
   computedModelValue.value = value;
   emit("update:modelValue", value);
 };
+
+// autofucs on mount
+onMounted(() => {
+  let intputRaw = input.value;
+  if (intputRaw.hasAttribute("autofocus")) intputRaw.focus();
+});
 </script>
 
 <style lang="scss" scoped>

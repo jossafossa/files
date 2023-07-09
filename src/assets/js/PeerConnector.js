@@ -17,6 +17,16 @@ class PeerConnector {
 
     this.fileHandler = new FileHandler();
 
+    // setup state
+    this.state = "login";
+    this.on("login", () => (this.state = "connect"));
+    this.on("logout", () => (this.state = "login"));
+    this.on("disconnected", () => (this.state = "connect"));
+    this.on("connected", () => (this.state = "connected"));
+    this.on(["login", "logout", "disconnect", "connect"], () => {
+      this.trigger("state", this.state);
+    });
+
     // close connection on window close
     window.addEventListener("beforeunload", (e) => this.destroy());
   }
@@ -35,7 +45,6 @@ class PeerConnector {
   }
 
   destroy() {
-    console.log("destroying");
     if (this.connection) {
       this.connection.close();
     }
@@ -44,11 +53,13 @@ class PeerConnector {
       this.peer.disconnect();
       this.peer.destroy();
     }
+
+    this.connection = null;
+    this.peer = null;
   }
 
   logout() {
     this.destroy();
-    this.trigger("logout");
   }
 
   login(name) {
@@ -90,8 +101,8 @@ class PeerConnector {
     this.peer.on("connection", (conn) => this.setupConnection(conn));
 
     // handle disconnect
-    this.peer.on("disconnected", (err) => this.disconnect());
-    this.peer.on("close", (err) => this.disconnect());
+    // this.peer.on("disconnected", (err) => this.disconnect("peer disconnected"));
+    // this.peer.on("close", (err) => this.disconnect("peer close"));
   }
 
   onData(e) {
@@ -123,30 +134,35 @@ class PeerConnector {
       this.fileChunks = [];
     }
 
-    this.fileChunks.push(e.chunk);
+    // console.log(e);
 
-    this.trigger("data:chunk", e);
+    this.fileHandler.addChunk(e);
+    // this.fileChunks.push(e.chunk);
 
-    if (this.fileChunks.length === e.total) {
-      const file = await this.fileHandler.createFile(this.fileChunks);
-      this.trigger("data:file", {
-        type: "file",
-        id: e.id,
-        file,
-        name: e.name,
-        size: e.size,
-      });
-    }
+    // this.trigger("data:chunk", e);
+
+    // if (this.fileChunks.length === e.total) {
+    //   const file = await this.fileHandler.createFile(this.fileChunks);
+    //   this.trigger("data:file", {
+    //     type: "file",
+    //     id: e.id,
+    //     file,
+    //     name: e.name,
+    //     size: e.size,
+    //   });
+    // }
   }
 
   onHandshake(e) {
     this.ack = true;
 
+    // trigger connected event
+    this.trigger("connected", this.connection);
+    this.trigger("data:handshake", e);
+
     // set userData
-    console.log("handshake", e);
     this.targetID = e.name;
 
-    this.trigger("data:handshake", e);
     this.sendHandshake();
   }
 
@@ -155,6 +171,7 @@ class PeerConnector {
       const chunks = await this.fileHandler.createChunks(file);
       const total = chunks.length;
       const uiID = this.generateUID();
+      console.log(chunks);
 
       for (let [order, chunk] of Object.entries(chunks)) {
         this.connection.send({
@@ -199,31 +216,30 @@ class PeerConnector {
 
   setupConnection(conn) {
     this.connection = conn;
-    this.trigger("connected", conn);
 
     this.connection.on("data", (e) => this.onData(e));
 
     this.sendHandshake();
 
     // handle disconnect
-    this.connection.on("close", (err) => this.disconnect());
-    this.connection.on("disconnected", (err) => this.disconnect());
+    this.connection.on("close", (err) => this.disconnect("connection close"));
+    // this.connection.on("disconnected", (err) =>
+    //   this.disconnect("connection disconnected")
+    // );
   }
 
-  disconnect() {
+  disconnect(type = "manual") {
     if (this.connection) {
       this.connection.close();
       this.connection = null;
       this.ack = false;
-      this.trigger("disconnect", this.connection);
+      this.trigger("disconnected", this.connection);
     } else {
       this.trigger("error", "cannot disconnect when not connected");
     }
   }
 
   connect(name) {
-    console.log("starting connection");
-
     // close connection if we have one
     if (this.connection) {
       this.trigger("error", "already connected");
@@ -242,6 +258,11 @@ class PeerConnector {
 
       // success
       dataConnection.on("open", () => this.setupConnection(dataConnection));
+
+      // error
+      dataConnection.on("error", (err) => {
+        this.trigger("error", err);
+      });
     } else {
       this.trigger("error", "Cannot connect when not logged in");
     }

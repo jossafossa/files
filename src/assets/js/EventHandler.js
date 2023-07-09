@@ -3,12 +3,18 @@ export default class EventHandler {
     this.events = {};
   }
 
-  on(event, callback) {
-    if (!this.events[event]) {
-      this.events[event] = [];
+  on(events, callback) {
+    if (typeof events === "string") {
+      events = [events];
     }
 
-    this.events[event].push(callback);
+    for (let event of events) {
+      if (!this.events[event]) {
+        this.events[event] = [];
+      }
+
+      this.events[event].push(callback);
+    }
   }
 
   trigger(event, data) {
